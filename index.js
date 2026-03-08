@@ -1,37 +1,24 @@
-const http = require("http");
-const fs = require("fs");
+const express = require("express");
+const app = express();
 
-const server = http.createServer((req, res) => {
-  res.setHeader("Content-Type", "text/html");
+app.listen(3000);
 
-  let path = "./pages/";
-  switch (req.url) {
-    case "/":
-      path += "index.html";
-      res.statusCode = 200;
-      break;
-    case "/about":
-      path += "about.html";
-      res.statusCode = 200;
-      break;
-    case "/contact-me":
-      path += "/contact-me.html";
-      res.statusCode = 200;
-      break;
-    default:
-      path += "404.html";
-      res.statusCode = 404;
-  }
-
-  fs.readFile(path, (err, data) => {
-    if (err) {
-      console.log(err);
-      res.end();
-    }
-    res.end(data);
-  });
+app.get("/", (req, res) => {
+  res.sendFile("./pages/index.html", { root: __dirname });
 });
 
-server.listen(3000, "localhost", () => {
-  console.log("listening");
+app.get("/about", (req, res) => {
+  res.sendFile("./pages/about.html", { root: __dirname });
+});
+
+app.get("/contact-me", (req, res) => {
+  res.sendFile("./pages/contact-me.html", { root: __dirname });
+});
+
+app.get("/contact", (req, res) => {
+  res.redirect("/contact-me");
+});
+
+app.use((req, res) => {
+  res.status(404).sendFile("./pages/404.html", { root: __dirname });
 });
